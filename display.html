@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLT — Scanne pour t'abonner</title>
+<meta name="theme-color" content="#0E0E0E">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --volt: #B8F000;
+    --ink: #0E0E0E;
+    --ink3: #7A7A7A;
+    --bg: #0E0E0E;
+    --card: #1A1A1A;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: #fff;
+    font-family: 'Barlow', sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ── LAYOUT ── */
+  .wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    gap: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* BG glow */
+  .wrapper::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(184,240,0,.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(52px, 8vw, 80px);
+    color: var(--volt);
+    letter-spacing: 6px;
+    line-height: 1;
+  }
+  .gym-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: clamp(22px, 3.5vw, 36px);
+    color: rgba(255,255,255,.7);
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  /* ── QR FRAME ── */
+  .qr-outer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qr-frame {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 0 0 1px rgba(184,240,0,.2),
+      0 0 60px rgba(184,240,0,.12),
+      0 32px 80px rgba(0,0,0,.6);
+    animation: pulse 3s ease-in-out infinite;
+    position: relative;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(184,240,0,.2), 0 0 60px rgba(184,240,0,.12), 0 32px 80px rgba(0,0,0,.6); }
+    50% { box-shadow: 0 0 0 3px rgba(184,240,0,.35), 0 0 80px rgba(184,240,0,.25), 0 32px 80px rgba(0,0,0,.6); }
+  }
+
+  /* Corner accents */
+  .qr-frame::before, .qr-frame::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: var(--volt);
+    border-style: solid;
+    border-radius: 2px;
+  }
+  .qr-frame::before { top: -3px; left: -3px; border-width: 3px 0 0 3px; }
+  .qr-frame::after  { bottom: -3px; right: -3px; border-width: 0 3px 3px 0; }
+
+  #qrcode canvas, #qrcode img {
+    display: block;
+    border-radius: 4px;
+  }
+
+  /* ── INSTRUCTION ── */
+  .instruction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .scan-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 4.5vw, 48px);
+    color: #fff;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+  .scan-sub {
+    font-size: clamp(14px, 2vw, 18px);
+    font-weight: 600;
+    color: rgba(255,255,255,.4);
+    text-align: center;
+    letter-spacing: .04em;
+  }
+  .price-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--volt);
+    color: var(--ink);
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(20px, 3vw, 28px);
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,.2);
+    letter-spacing: .04em;
+  }
+
+  /* ── LANDSCAPE (tablette horizontale) ── */
+  @media (orientation: landscape) and (min-width: 700px) {
+    .wrapper {
+      flex-direction: row;
+      justify-content: center;
+      gap: 60px;
+      padding: 32px 60px;
+    }
+    .left-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      flex: 1;
+    }
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      flex: 0 0 auto;
+    }
+    .header { align-items: flex-start; }
+    .logo { font-size: clamp(60px, 9vw, 100px); }
+    .gym-name { text-align: left; font-size: clamp(22px, 3vw, 40px); }
+    .instruction { align-items: flex-start; }
+    .scan-label { text-align: left; }
+    .scan-sub { text-align: left; }
+  }
+
+  /* ── ADMIN SELECTOR (only shown when no ?gym param) ── */
+  .admin-selector {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--ink);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 40px;
+    z-index: 100;
+  }
+  .admin-selector.show { display: flex; }
+  .admin-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 40px;
+    color: var(--volt);
+  }
+  .admin-sub {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,.5);
+    text-align: center;
+    max-width: 500px;
+  }
+  .gym-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    width: 100%;
+    max-width: 700px;
+  }
+  .gym-btn {
+    background: #1A1A1A;
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s, background .15s;
+    color: #fff;
+  }
+  .gym-btn:hover { border-color: var(--volt); background: rgba(184,240,0,.05); }
+  .gym-btn-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .gym-btn-loc { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.4); }
+  .gym-btn-id  { font-size: 11px; font-weight: 700; color: var(--volt); margin-top: 8px; letter-spacing: .06em; }
+
+  /* ── QR PRINT SECTION (hidden on screen, shown for print) ── */
+  @media print {
+    .wrapper, .admin-selector { display: none !important; }
+    .print-page { display: block !important; }
+  }
+  .print-page {
+    display: none;
+    padding: 40px;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ ADMIN SELECTOR (shown when no gym param) ══ -->
+<div class="admin-selector" id="adminSelector">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;color:#B8F000;letter-spacing:4px;">VOLT</div>
+  <div class="admin-title">Sélectionne le fitness</div>
+  <div class="admin-sub">Ouvre cette page sur la tablette du fitness correspondant. Le QR code s'affichera automatiquement.</div>
+  <div class="gym-grid" id="gymGrid"></div>
+  <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.25);margin-top:8px;">
+    💡 Tu peux aussi ajouter <code style="color:#B8F000;">?gym=ID</code> dans l'URL directement
+  </div>
+</div>
+
+<!-- ══ DISPLAY (shown with gym param) ══ -->
+<div class="wrapper" id="displayWrapper" style="display:none;">
+  <!-- PORTRAIT: single column / LANDSCAPE: left col -->
+  <div class="left-col" id="leftCol">
+    <div class="header">
+      <div class="logo">VOLT</div>
+      <div class="gym-name" id="gymNameDisplay">Fitness Park Lausanne</div>
+    </div>
+    <div class="instruction" id="instrCol">
+      <div class="scan-label">📲 Scanne pour<br>t'abonner</div>
+      <div class="scan-sub">Rejoins VOLT en 30 secondes</div>
+      <div class="price-badge">
+        <span>Dès</span>
+        <span>CHF 3.-</span>
+        <span style="font-size:.7em;opacity:.7;">/jour</span>
+        <span style="opacity:.4;margin:0 4px;">·</span>
+        <span style="color:rgba(0,0,0,.8)">CHF 8.90</span>
+        <span style="font-size:.7em;opacity:.7;">/mois</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT col (landscape) / centered (portrait) -->
+  <div class="right-col" id="rightCol">
+    <div class="qr-outer">
+      <div class="qr-frame">
+        <div id="qrcode"></div>
+      </div>
+    </div>
+    <div class="footer">
+      <span>volt-energy.ch</span>
+      <span>·</span>
+      <span id="gymIdDisplay"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── GYM DATA ──────────────────────────────────────────
+const GYMS = [
+  { id: "volt-lausanne", name: "Fitness Park Lausanne", loc: "Av. de la Gare 14 · Lausanne",     filiale: "FitnessPlus" },
+  { id: "volt-geneve",   name: "FitnessPlus Genève",   loc: "Rue de la Servette 22 · Genève",   filiale: "FitnessPlus" },
+  { id: "volt-berne",    name: "CrossFit Berne",        loc: "Bahnhofplatz 3 · Berne",           filiale: "CrossFit"   },
+];
+
+// ── READ URL PARAM ─────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+const gymId  = params.get('gym');
+const gym    = GYMS.find(g => g.id === gymId);
+
+// ── QR SIZE based on screen ────────────────────────────
+function qrSize() {
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const shorter = Math.min(window.innerWidth, window.innerHeight);
+  if (isLandscape) return Math.min(Math.round(shorter * .65), 420);
+  return Math.min(Math.round(shorter * .62), 380);
+}
+
+// ── BUILD QR ──────────────────────────────────────────
+function buildQR(gym) {
+  const registrationURL = `https://volt-energy.ch/join?gym=${gym.id}&ref=display&v=1`;
+
+  const el = document.getElementById('qrcode');
+  el.innerHTML = '';
+
+  const size = qrSize();
+
+  try {
+    new QRCode(el, {
+      text: registrationURL,
+      width: size,
+      height: size,
+      colorDark: '#0E0E0E',
+      colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.H  // High error correction (more robust)
+    });
+  } catch(e) {
+    // Fallback SVG if library fails
+    el.innerHTML = buildFallbackQR(size, gym.id);
+  }
+
+  document.getElementById('gymNameDisplay').textContent = gym.name;
+  document.getElementById('gymIdDisplay').textContent   = gym.id;
+}
+
+function buildFallbackQR(size, gymId) {
+  const s = size, c = Math.floor(s / 10);
+  return `<svg width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg" style="border-radius:6px;">
+    <rect width="${s}" height="${s}" fill="#fff"/>
+    <!-- TL corner -->
+    <rect x="${c}" y="${c}" width="${c*3}" height="${c*3}" fill="#0E0E0E" rx="3"/>
+    <rect x="${c*1.4}" y="${c*1.4}" width="${c*2.2}" height="${c*2.2}" fill="#fff" rx="2"/>
+    <rect x="${c*1.9}" y="${c*1.9}" width="${c*1.2}" height="${c*1.2}" fill="#0E0E0E" rx="1"/>
+    <!-- TR corner -->
+    <rect x="${s-c*4}" y="${c}" width="${c*3}" height="${c*3}" fill="#0E0E0E" rx="3"/>
+    <rect x="${s-c*3.6}" y="${c*1.4}" width="${c*2.2}" height="${c*2.2}" fill="#fff" rx="2"/>
+    <rect x="${s-c*3.1}" y="${c*1.9}" width="${c*1.2}" height="${c*1.2}" fill="#0E0E0E" rx="1"/>
+    <!-- BL corner -->
+    <rect x="${c}" y="${s-c*4}" width="${c*3}" height="${c*3}" fill="#0E0E0E" rx="3"/>
+    <rect x="${c*1.4}" y="${s-c*3.6}" width="${c*2.2}" height="${c*2.2}" fill="#fff" rx="2"/>
+    <rect x="${c*1.9}" y="${s-c*3.1}" width="${c*1.2}" height="${c*1.2}" fill="#0E0E0E" rx="1"/>
+    <!-- Data dots -->
+    <rect x="${c*5}" y="${c*1.5}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*6.2}" y="${c*1.5}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*7.4}" y="${c*1.5}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*5}" y="${c*5}" width="${c*1.5}" height="${c*1.5}" fill="#0E0E0E" rx="2"/>
+    <rect x="${c*7}" y="${c*5}" width="${c*1.5}" height="${c*1.5}" fill="#0E0E0E" rx="2"/>
+    <rect x="${c*5}" y="${c*7}" width="${c*1.5}" height="${c*1.5}" fill="#0E0E0E" rx="2"/>
+    <rect x="${c*7}" y="${c*7}" width="${c*1.5}" height="${c*1.5}" fill="#0E0E0E" rx="2"/>
+    <rect x="${c*5.5}" y="${c*5.5}" width="${c*2.5}" height="${c*2.5}" fill="#B8F000" rx="2"/>
+    <rect x="${c*5}" y="${c*3}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*7.4}" y="${c*3}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*1.5}" y="${c*5}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*1.5}" y="${c*6.5}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*5}" y="${c*8.5}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*6.5}" y="${c*8.5}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+    <rect x="${c*8}" y="${c*6}" width="${c*.8}" height="${c*.8}" fill="#0E0E0E" rx="1"/>
+  </svg>`;
+}
+
+// ── SHOW ADMIN SELECTOR ────────────────────────────────
+function showAdminSelector() {
+  document.getElementById('adminSelector').classList.add('show');
+  const grid = document.getElementById('gymGrid');
+  grid.innerHTML = GYMS.map(g => `
+    <div class="gym-btn" onclick="selectGym('${g.id}')">
+      <div class="gym-btn-name">${g.name}</div>
+      <div class="gym-btn-loc">${g.loc}</div>
+      <div class="gym-btn-id">🔗 ?gym=${g.id}</div>
+    </div>
+  `).join('');
+}
+
+function selectGym(id) {
+  // Update URL without reload, then init
+  const url = new URL(window.location.href);
+  url.searchParams.set('gym', id);
+  window.history.replaceState({}, '', url.toString());
+  document.getElementById('adminSelector').classList.remove('show');
+  const g = GYMS.find(x => x.id === id);
+  if (g) init(g);
+}
+
+// ── WAKE LOCK (screen stays on) ───────────────────────
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      await navigator.wakeLock.request('screen');
+    }
+  } catch(e) { /* silently fail on unsupported browsers */ }
+}
+
+// ── RESIZE HANDLER ─────────────────────────────────────
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const g = GYMS.find(x => x.id === (new URLSearchParams(window.location.search).get('gym')));
+    if (g) buildQR(g);
+  }, 300);
+});
+
+// ── INIT ──────────────────────────────────────────────
+function init(gym) {
+  document.getElementById('displayWrapper').style.display = 'flex';
+  document.getElementById('adminSelector').classList.remove('show');
+  buildQR(gym);
+  requestWakeLock();
+
+  // Keep wake lock alive on visibility change
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible') await requestWakeLock();
+  });
+
+  // Landscape/portrait: rearrange layout
+  adjustLayout();
+  window.addEventListener('resize', adjustLayout);
+}
+
+function adjustLayout() {
+  const isLandscape = window.innerWidth > window.innerHeight && window.innerWidth > 700;
+  const wrapper = document.getElementById('displayWrapper');
+  const leftCol = document.getElementById('leftCol');
+  const rightCol = document.getElementById('rightCol');
+  const instrCol = document.getElementById('instrCol');
+
+  if (isLandscape) {
+    wrapper.style.flexDirection = 'row';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.gap = '60px';
+    leftCol.style.alignItems = 'flex-start';
+    instrCol.style.alignItems = 'flex-start';
+  } else {
+    wrapper.style.flexDirection = 'column';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.gap = '24px';
+    leftCol.style.alignItems = 'center';
+    instrCol.style.alignItems = 'center';
+  }
+}
+
+// ── BOOT ──────────────────────────────────────────────
+if (gym) {
+  init(gym);
+} else {
+  showAdminSelector();
+}
+</script>
+</body>
+</html>

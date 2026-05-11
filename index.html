@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLT — Énergie sans limites</title>
+<meta name="description" content="VOLT distribue des boissons énergisantes par abonnement dans les fitness. Dès CHF 3.- la journée ou CHF 8.90 par mois, accès illimité via QR code.">
+<meta name="theme-color" content="#0E0E0E">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230E0E0E'/><text y='.9em' font-size='80' x='10'>⚡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & ROOT ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --volt: #B8F000; --vdk: #7AAA00; --vlt: #EDFFA0;
+  --ink: #0E0E0E; --ink2: #3A3A3A; --ink3: #7A7A7A;
+  --bg: #F5F4EF; --bg2: #EDECEA; --w: #FFFFFF;
+  --b2: rgba(14,14,14,.06); --red: #FF3B30; --grn: #2DB87A;
+  --r: 18px; --rs: 10px;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: 'Barlow', sans-serif; overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(245,244,239,.92);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--b2);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 40px;
+}
+.nav-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 28px; color: var(--ink); letter-spacing: 2px; text-decoration: none; }
+.nav-logo span { color: var(--vdk); }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { font-size: 14px; font-weight: 600; color: var(--ink3); text-decoration: none; transition: color .15s; }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta { background: var(--ink); color: var(--w); padding: 10px 22px; border-radius: 50px; font-size: 14px; font-weight: 700; text-decoration: none; transition: opacity .15s; }
+.nav-cta:hover { opacity: .85; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 120px 40px 80px;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #E8FFC0 0%, var(--bg) 55%);
+}
+.hero-v {
+  position: absolute; top: -60px; right: -60px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+  font-size: 55vw; color: var(--volt); opacity: .12; line-height: 1;
+  pointer-events: none; user-select: none;
+}
+.hero-content { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; width: 100%; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--volt); border-radius: 50px; padding: 6px 16px;
+  font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink); margin-bottom: 20px;
+}
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+  font-size: clamp(60px, 10vw, 130px); line-height: .9; color: var(--ink);
+  letter-spacing: -1px; margin-bottom: 24px;
+}
+.hero-title .accent { color: var(--vdk); }
+.hero-sub { font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ink3); max-width: 520px; line-height: 1.6; margin-bottom: 36px; }
+.hero-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--ink); color: var(--w);
+  padding: 16px 32px; border-radius: 50px;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 900;
+  letter-spacing: .04em; text-decoration: none; transition: transform .15s, opacity .15s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { transform: translateY(-2px); opacity: .9; }
+.btn-secondary {
+  background: transparent; color: var(--ink);
+  padding: 16px 24px; border-radius: 50px;
+  font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 700;
+  text-decoration: none; border: 1.5px solid rgba(14,14,14,.15);
+  transition: border-color .15s;
+}
+.btn-secondary:hover { border-color: var(--ink); }
+.hero-stats {
+  display: flex; gap: 40px; margin-top: 56px; flex-wrap: wrap;
+}
+.hero-stat-num {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+  font-size: 40px; color: var(--ink); line-height: 1;
+}
+.hero-stat-label { font-size: 13px; font-weight: 600; color: var(--ink3); margin-top: 2px; }
+
+/* ── TICKER ── */
+.ticker { background: var(--ink); padding: 14px 0; overflow: hidden; display: flex; }
+.ticker-inner { display: flex; gap: 60px; animation: ticker 25s linear infinite; white-space: nowrap; flex-shrink: 0; }
+.ticker-item { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 3px; color: var(--volt); display: flex; align-items: center; gap: 20px; flex-shrink: 0; text-transform: uppercase; }
+.ticker-dot { width: 5px; height: 5px; background: rgba(184,240,0,.4); border-radius: 50%; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── SECTIONS ── */
+section { padding: 100px 40px; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-label { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--vdk); margin-bottom: 12px; }
+.section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(36px, 5vw, 60px); color: var(--ink); line-height: 1; margin-bottom: 16px; }
+.section-sub { font-size: 16px; font-weight: 500; color: var(--ink3); max-width: 520px; line-height: 1.7; }
+
+/* ── HOW IT WORKS ── */
+#how { background: var(--w); border-top: 1px solid var(--b2); }
+.how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 56px; }
+.steps { display: flex; flex-direction: column; }
+.step { display: flex; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--b2); }
+.step-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 48px; color: var(--b2); line-height: 1; transition: color .2s; flex-shrink: 0; width: 56px; }
+.step:hover .step-num { color: var(--volt); }
+.step-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 6px; }
+.step-desc { font-size: 15px; font-weight: 500; color: var(--ink3); line-height: 1.6; }
+.phone-mockup {
+  background: var(--ink); border-radius: 40px; padding: 20px;
+  aspect-ratio: 9/19; max-width: 280px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center;
+  box-shadow: 0 40px 80px rgba(0,0,0,.3); position: relative; overflow: hidden;
+}
+.mockup-bg { position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, rgba(184,240,0,.1) 0%, transparent 60%); }
+.mockup-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 22px; color: var(--volt); letter-spacing: 3px; margin-bottom: 12px; position: relative; }
+.mockup-qr-wrap { width: 140px; height: 140px; background: var(--w); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px rgba(184,240,0,.3), 0 0 30px rgba(184,240,0,.1); position: relative; margin-bottom: 14px; }
+.mockup-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 16px; color: var(--w); margin-bottom: 4px; position: relative; }
+.mockup-sub { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.35); letter-spacing: .06em; text-transform: uppercase; position: relative; }
+.mockup-scan-bar { width: 100%; margin-top: 16px; background: var(--volt); border-radius: 14px; padding: 12px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; color: var(--ink); position: relative; }
+
+/* ── PRICING ── */
+#pricing { background: var(--bg); }
+.plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 56px; }
+.plan-card {
+  background: var(--w); border: 1.5px solid var(--b2); border-radius: 22px;
+  padding: 28px; position: relative; transition: border-color .2s, transform .2s;
+}
+.plan-card:hover { border-color: rgba(14,14,14,.2); transform: translateY(-4px); }
+.plan-card.featured { border-color: var(--ink); background: var(--ink); color: var(--w); }
+.plan-card.best { border-color: #F5C518; }
+.plan-pop {
+  position: absolute; top: -1px; left: 20px;
+  background: var(--volt); color: var(--ink);
+  font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  padding: 3px 12px; border-radius: 0 0 10px 10px;
+}
+.plan-pop.gold { background: #F5C518; }
+.plan-name { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+.plan-card.featured .plan-name { color: rgba(255,255,255,.4); }
+.plan-price { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 52px; line-height: 1; margin-bottom: 4px; }
+.plan-price span { font-size: 20px; font-family: 'Barlow', sans-serif; font-weight: 700; }
+.plan-period { font-size: 13px; font-weight: 500; color: var(--ink3); margin-bottom: 20px; }
+.plan-card.featured .plan-period { color: rgba(255,255,255,.4); }
+.plan-saving { font-size: 13px; font-weight: 700; color: var(--grn); margin-bottom: 16px; }
+.plan-feats { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.plan-feats li { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.plan-feats li::before { content: '⚡'; font-size: 12px; }
+.plan-card.featured .plan-feats li { color: rgba(255,255,255,.8); }
+.plan-btn {
+  display: block; text-align: center; padding: 13px;
+  border-radius: 50px; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 700;
+  text-decoration: none; transition: all .15s;
+  background: var(--bg2); color: var(--ink); border: none; cursor: pointer; width: 100%;
+}
+.plan-card.featured .plan-btn { background: var(--volt); color: var(--ink); }
+.plan-btn:hover { opacity: .85; }
+
+/* ── APP DOWNLOAD ── */
+#app { background: var(--ink); }
+#app .section-title { color: var(--w); }
+#app .section-sub { color: rgba(255,255,255,.5); }
+.app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 56px; }
+.app-features { display: flex; flex-direction: column; gap: 20px; }
+.app-feature {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 20px; border-radius: 16px;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.06);
+  transition: border-color .15s;
+}
+.app-feature:hover { border-color: rgba(184,240,0,.2); }
+.app-feature-icon { font-size: 24px; flex-shrink: 0; }
+.app-feature-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 18px; color: var(--w); margin-bottom: 4px; }
+.app-feature-desc { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.4); line-height: 1.6; }
+.install-steps { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.install-step {
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; gap: 14px;
+}
+.install-step-num { width: 32px; height: 32px; background: var(--volt); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; color: var(--ink); flex-shrink: 0; }
+.install-step-text { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.7); }
+.install-step-sub { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.35); margin-top: 2px; }
+.pwa-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--volt); color: var(--ink);
+  padding: 16px 28px; border-radius: 50px;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 900;
+  text-decoration: none; margin-top: 20px; transition: transform .15s;
+}
+.pwa-btn:hover { transform: translateY(-2px); }
+
+/* ── CONTACT ── */
+#contact { background: var(--bg); border-top: 1px solid var(--b2); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; margin-top: 56px; }
+.contact-info { display: flex; flex-direction: column; gap: 16px; }
+.contact-item { display: flex; align-items: center; gap: 14px; }
+.contact-icon { width: 44px; height: 44px; background: var(--volt); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.contact-label { font-size: 11px; font-weight: 700; color: var(--ink3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+.contact-value { font-size: 16px; font-weight: 700; color: var(--ink); text-decoration: none; }
+.contact-value:hover { color: var(--vdk); }
+.contact-form { display: flex; flex-direction: column; gap: 14px; }
+.cf-inp {
+  background: var(--w); border: 1.5px solid var(--b2); border-radius: 12px;
+  padding: 14px 16px; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 500;
+  color: var(--ink); outline: none; width: 100%; transition: border-color .15s;
+}
+.cf-inp:focus { border-color: var(--ink); }
+.cf-inp::placeholder { color: var(--ink3); }
+textarea.cf-inp { resize: vertical; min-height: 120px; }
+.cf-btn {
+  background: var(--ink); color: var(--w); border: none; border-radius: 50px;
+  padding: 15px 28px; font-family: 'Barlow Condensed', sans-serif; font-size: 20px;
+  font-weight: 900; letter-spacing: .04em; cursor: pointer; transition: opacity .15s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.cf-btn:hover { opacity: .85; }
+/* Fitness partner CTA */
+.partner-banner {
+  background: var(--ink); border-radius: 22px; padding: 40px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  margin-top: 60px; flex-wrap: wrap;
+}
+.partner-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 34px; color: var(--w); }
+.partner-sub { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.4); margin-top: 4px; max-width: 400px; }
+.partner-btn {
+  background: var(--volt); color: var(--ink); padding: 14px 28px; border-radius: 50px;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 900;
+  text-decoration: none; white-space: nowrap; transition: transform .15s;
+}
+.partner-btn:hover { transform: translateY(-2px); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink); padding: 60px 40px 40px;
+  display: flex; flex-direction: column; gap: 40px;
+}
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; }
+.footer-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 36px; color: var(--volt); letter-spacing: 4px; margin-bottom: 12px; }
+.footer-desc { font-size: 14px; font-weight: 500; color: rgba(255,255,255,.35); line-height: 1.7; max-width: 260px; }
+.footer-col h4 { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 16px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.5); text-decoration: none; transition: color .15s; }
+.footer-col a:hover { color: var(--volt); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.06); flex-wrap: wrap; gap: 12px; }
+.footer-bottom p { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.25); }
+.footer-made { font-size: 12px; font-weight: 700; color: var(--volt); letter-spacing: .04em; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 14px 20px; }
+  .nav-links { display: none; }
+  .hero { padding: 100px 20px 60px; }
+  section { padding: 70px 20px; }
+  .how-grid, .app-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .plans-grid { grid-template-columns: 1fr 1fr; }
+  .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  footer { padding: 40px 20px 32px; }
+  .partner-banner { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .plans-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 24px; }
+  .hero-title { font-size: 52px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">VOLT<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">Comment ça marche</a></li>
+    <li><a href="#pricing">Tarifs</a></li>
+    <li><a href="#app">L'App</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="VoltApp.html" class="nav-cta">Télécharger l'app ⚡</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-v">V</div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span>⚡</span>
+      <span>Boissons énergisantes par abonnement · Suisse</span>
+    </div>
+    <h1 class="hero-title">
+      ÉNERGIE<br>
+      <span class="accent">SANS</span><br>
+      LIMITES
+    </h1>
+    <p class="hero-sub">VOLT installe des distributeurs de boissons énergisantes dans les fitness. Un QR code, un scan, une boisson instantanée.</p>
+    <div class="hero-actions">
+      <a href="VoltApp.html" class="btn-primary">📲 Télécharger l'app</a>
+      <a href="#how" class="btn-secondary">Comment ça marche →</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">8.90</div>
+        <div class="hero-stat-label">CHF / mois · illimité</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">15 min</div>
+        <div class="hero-stat-label">Entre chaque boisson max</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">Sans App Store</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="ticker-item"><span class="ticker-dot"></span>QR CODE UNIQUE</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>CHF 8.90 / MOIS</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>SANS APP STORE</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>1 BOISSON / 15 MIN</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>RÉSEAU SUISSE</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>PARRAINAGE OFFERT</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>FR · DE</div>
+    <!-- duplicate for loop -->
+    <div class="ticker-item"><span class="ticker-dot"></span>QR CODE UNIQUE</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>CHF 8.90 / MOIS</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>SANS APP STORE</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>1 BOISSON / 15 MIN</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>RÉSEAU SUISSE</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>PARRAINAGE OFFERT</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>FR · DE</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-label">Comment ça marche</div>
+    <h2 class="section-title">Simple.<br>Rapide. Efficace.</h2>
+    <div class="how-grid">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div>
+            <div class="step-title">Scanne le QR de ton fitness</div>
+            <p class="step-desc">Un QR code VOLT est affiché à côté de la machine dans ton gym. Scanne-le pour t'inscrire — ton compte est automatiquement lié au bon fitness.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div>
+            <div class="step-title">Choisis ton abonnement</div>
+            <p class="step-desc">Journée à CHF 3.-, mensuel à CHF 8.90, trimestriel ou annuel. Paiement par carte ou TWINT, renouvellement automatique.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div>
+            <div class="step-title">Présente ton QR à la machine</div>
+            <p class="step-desc">Ouvre l'app, présente ton QR au scanner VOLT. La machine distribue ta boisson en 2 secondes. Maximum 1 boisson toutes les 15 minutes.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div>
+            <div class="step-title">Parraine tes amis</div>
+            <p class="step-desc">Partage ton lien de parrainage. Si ton ami s'abonne, tu reçois -1 mois offert automatiquement.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone mockup -->
+      <div class="phone-mockup">
+        <div class="mockup-bg"></div>
+        <div class="mockup-logo">VOLT</div>
+        <div class="mockup-qr-wrap">
+          <!-- Inline QR -->
+          <svg width="110" height="110" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+            <rect width="110" height="110" fill="#fff"/>
+            <rect x="7" y="7" width="30" height="30" fill="#0E0E0E" rx="3"/>
+            <rect x="11" y="11" width="22" height="22" fill="#fff" rx="2"/>
+            <rect x="15" y="15" width="14" height="14" fill="#0E0E0E" rx="1"/>
+            <rect x="73" y="7" width="30" height="30" fill="#0E0E0E" rx="3"/>
+            <rect x="77" y="11" width="22" height="22" fill="#fff" rx="2"/>
+            <rect x="81" y="15" width="14" height="14" fill="#0E0E0E" rx="1"/>
+            <rect x="7" y="73" width="30" height="30" fill="#0E0E0E" rx="3"/>
+            <rect x="11" y="77" width="22" height="22" fill="#fff" rx="2"/>
+            <rect x="15" y="81" width="14" height="14" fill="#0E0E0E" rx="1"/>
+            <rect x="40" y="11" width="6" height="6" fill="#0E0E0E" rx="1"/>
+            <rect x="50" y="11" width="6" height="6" fill="#0E0E0E" rx="1"/>
+            <rect x="60" y="11" width="6" height="6" fill="#0E0E0E" rx="1"/>
+            <rect x="11" y="40" width="6" height="6" fill="#0E0E0E" rx="1"/>
+            <rect x="11" y="50" width="6" height="6" fill="#0E0E0E" rx="1"/>
+            <rect x="11" y="60" width="6" height="6" fill="#0E0E0E" rx="1"/>
+            <rect x="40" y="40" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="52" y="40" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="64" y="40" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="76" y="40" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="40" y="52" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="64" y="52" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="40" y="64" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="52" y="64" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="88" y="52" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="76" y="64" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="88" y="64" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="40" y="76" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="52" y="88" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="76" y="76" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="88" y="88" width="8" height="8" fill="#0E0E0E" rx="1"/>
+            <rect x="50" y="50" width="10" height="10" fill="#B8F000" rx="2"/>
+          </svg>
+        </div>
+        <div class="mockup-name">Alexandre M.</div>
+        <div class="mockup-sub">✓ Prêt à scanner</div>
+        <div class="mockup-scan-bar">📲 Présente à la machine</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-label">Tarifs</div>
+    <h2 class="section-title">Choisis ton plan</h2>
+    <p class="section-sub">Accès libre à tous les fitness du réseau VOLT de ta filiale. 1 boisson max toutes les 15 minutes.</p>
+
+    <div class="plans-grid">
+      <!-- JOURNÉE -->
+      <div class="plan-card">
+        <div class="plan-name">Journée</div>
+        <div class="plan-price"><span>CHF </span>3.-</div>
+        <div class="plan-period">Valable 24 heures</div>
+        <ul class="plan-feats">
+          <li>QR temporaire 24h</li>
+          <li>1 boisson / 15 min</li>
+          <li>Réseau VOLT filiale</li>
+        </ul>
+        <a href="VoltApp.html" class="plan-btn">Commencer</a>
+      </div>
+
+      <!-- MENSUEL -->
+      <div class="plan-card featured">
+        <div class="plan-pop">⭐ Populaire</div>
+        <div class="plan-name">Mensuel</div>
+        <div class="plan-price"><span>CHF </span>8.90</div>
+        <div class="plan-period">Par mois · sans engagement</div>
+        <ul class="plan-feats">
+          <li>QR code permanent</li>
+          <li>1 boisson / 15 min</li>
+          <li>Réseau VOLT filiale</li>
+          <li>Parrainage actif</li>
+        </ul>
+        <a href="VoltApp.html" class="plan-btn">Je m'abonne</a>
+      </div>
+
+      <!-- TRIMESTRIEL -->
+      <div class="plan-card">
+        <div class="plan-name">Trimestriel</div>
+        <div class="plan-price"><span>CHF </span>22.-</div>
+        <div class="plan-period">3 mois · économise 17%</div>
+        <div class="plan-saving">💰 Économie CHF 4.70</div>
+        <ul class="plan-feats">
+          <li>QR code permanent</li>
+          <li>1 boisson / 15 min</li>
+          <li>Réseau VOLT filiale</li>
+          <li>Parrainage actif</li>
+        </ul>
+        <a href="VoltApp.html" class="plan-btn">Choisir</a>
+      </div>
+
+      <!-- ANNUEL -->
+      <div class="plan-card best">
+        <div class="plan-pop gold">🏆 Meilleure valeur</div>
+        <div class="plan-name">Annuel</div>
+        <div class="plan-price"><span>CHF </span>79.-</div>
+        <div class="plan-period">12 mois · économise 26%</div>
+        <div class="plan-saving">💰 Économie CHF 27.80</div>
+        <ul class="plan-feats">
+          <li>QR code permanent</li>
+          <li>1 boisson / 15 min</li>
+          <li>Réseau VOLT filiale</li>
+          <li>Parrainage actif</li>
+        </ul>
+        <a href="VoltApp.html" class="plan-btn">Meilleur prix</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP DOWNLOAD -->
+<section id="app">
+  <div class="section-inner">
+    <div class="section-label" style="color:rgba(184,240,0,.6);">L'application</div>
+    <h2 class="section-title">Installable en<br>30 secondes.</h2>
+    <p class="section-sub">Pas besoin d'App Store. VOLT est une PWA — tu l'installes directement depuis le navigateur.</p>
+    <div class="app-grid">
+      <div class="app-features">
+        <div class="app-feature">
+          <div class="app-feature-icon">📲</div>
+          <div>
+            <div class="app-feature-title">Sans App Store</div>
+            <div class="app-feature-desc">Installe l'app directement depuis ton navigateur Safari ou Chrome. Aucune boutique, aucune validation.</div>
+          </div>
+        </div>
+        <div class="app-feature">
+          <div class="app-feature-icon">🔐</div>
+          <div>
+            <div class="app-feature-title">QR code sécurisé</div>
+            <div class="app-feature-desc">Ton QR est unique et permanent. Après chaque scan par la machine, un cooldown de 15 min s'active automatiquement.</div>
+          </div>
+        </div>
+        <div class="app-feature">
+          <div class="app-feature-icon">🤝</div>
+          <div>
+            <div class="app-feature-title">Parrainage intégré</div>
+            <div class="app-feature-desc">Partage ton lien depuis l'app. Ton ami s'abonne → tu reçois 1 mois offert automatiquement.</div>
+          </div>
+        </div>
+        <div class="app-feature">
+          <div class="app-feature-icon">🇫🇷 🇩🇪</div>
+          <div>
+            <div class="app-feature-title">Français & Deutsch</div>
+            <div class="app-feature-desc">L'app est disponible en français et allemand. Choix de la langue dans les paramètres.</div>
+          </div>
+        </div>
+        <a href="VoltApp.html" class="pwa-btn">📲 Installer l'app VOLT</a>
+      </div>
+
+      <div>
+        <div style="margin-bottom:16px;font-size:13px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.06em;text-transform:uppercase;">Guide d'installation</div>
+        <div class="install-steps">
+          <div class="install-step">
+            <div class="install-step-num">1</div>
+            <div>
+              <div class="install-step-text">Ouvre volt-energy.ch dans Safari</div>
+              <div class="install-step-sub">iOS : Safari uniquement pour l'installation PWA</div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="install-step-num">2</div>
+            <div>
+              <div class="install-step-text">Tape sur "Partager" puis "Sur l'écran d'accueil"</div>
+              <div class="install-step-sub">Android : bouton "Installer l'application" automatique</div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="install-step-num">3</div>
+            <div>
+              <div class="install-step-text">Scanne le QR VOLT de ton fitness</div>
+              <div class="install-step-sub">L'app s'ouvre avec ton fitness pré-sélectionné</div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="install-step-num">4</div>
+            <div>
+              <div class="install-step-text">Crée ton compte & paie en 30 sec</div>
+              <div class="install-step-sub">Carte bancaire ou TWINT · accès immédiat</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-label">Contact</div>
+    <h2 class="section-title">On est là.</h2>
+    <p class="section-sub">Une question sur l'app, ton abonnement ou tu veux installer VOLT dans ton fitness ?</p>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon">📧</div>
+          <div>
+            <div class="contact-label">Email</div>
+            <a href="mailto:contact@volt-energy.ch" class="contact-value">contact@volt-energy.ch</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📱</div>
+          <div>
+            <div class="contact-label">Instagram</div>
+            <a href="#" class="contact-value">@volt.energy.ch</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🇨🇭</div>
+          <div>
+            <div class="contact-label">Basé en</div>
+            <div class="contact-value">Suisse · Lausanne</div>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form" onsubmit="return false;">
+        <input type="text" class="cf-inp" placeholder="Ton nom">
+        <input type="email" class="cf-inp" placeholder="ton@email.ch">
+        <textarea class="cf-inp" placeholder="Ton message..."></textarea>
+        <button type="submit" class="cf-btn" onclick="this.textContent='Message envoyé ✓'; this.style.opacity='.6';">
+          Envoyer →
+        </button>
+      </form>
+    </div>
+
+    <!-- Fitness partner CTA -->
+    <div class="partner-banner">
+      <div>
+        <div class="partner-title">Tu gères un fitness ?</div>
+        <p class="partner-sub">Installe une machine VOLT dans ton établissement. Tes membres y gagnent, toi aussi. Zéro investissement côté matériel.</p>
+      </div>
+      <a href="mailto:contact@volt-energy.ch?subject=Partenariat Fitness VOLT" class="partner-btn">Devenir partenaire →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">VOLT</div>
+      <p class="footer-desc">La première plateforme suisse de distribution de boissons énergisantes par abonnement dans les fitness.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Application</h4>
+      <ul>
+        <li><a href="VoltApp.html">Télécharger l'app</a></li>
+        <li><a href="#how">Comment ça marche</a></li>
+        <li><a href="#pricing">Tarifs</a></li>
+        <li><a href="display.html">Affichage fitness</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Légal</h4>
+      <ul>
+        <li><a href="#">CGV</a></li>
+        <li><a href="#">Politique de confidentialité</a></li>
+        <li><a href="#">Mentions légales</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 VOLT Energy · Tous droits réservés · Suisse</p>
+    <div class="footer-made">MADE IN 🇨🇭 · CHF ONLY</div>
+  </div>
+</footer>
+
+<script>
+// Smooth reveal on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.step, .plan-card, .app-feature, .install-step, .contact-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity .5s ease, transform .5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
